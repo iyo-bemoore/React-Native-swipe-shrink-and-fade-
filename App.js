@@ -1,21 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { useFonts } from "@use-expo/font";
+import { AppLoading } from "expo";
+import { View, SafeAreaView, StatusBar } from "react-native";
+import CustomCard from "./src/components/Card";
+import Deck from "./src/Deck";
+import { styles } from "./src/styles/main";
+import { DATA } from "./src/deckItems";
+const customFonts = {
+  Montserrat: require("./assets/fonts/montserrat.ttf"),
+};
 
-export default function App() {
+const App = () => {
+  const [isLoaded] = useFonts(customFonts);
+
+  const renderCard = (item) => {
+    return <CustomCard item={item} handleReset={handleReset} />;
+  };
+  const deckElement = React.createRef();
+  const handleReset = () => {
+    deckElement.current.resetCards();
+  };
+
+  if (!isLoaded) {
+    return <AppLoading />;
+  }
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <React.Fragment>
+      <StatusBar style={{ color: styles.heading.color }} />
+      <SafeAreaView backgroundColor={styles.container.backgroundColor} />
+      <View style={styles.container}>
+        <Deck ref={deckElement} renderCard={renderCard} data={DATA} />
+      </View>
+    </React.Fragment>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
